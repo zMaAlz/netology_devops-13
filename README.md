@@ -7,5 +7,6 @@
  - [Yaml.JPG](01-intro-01/Yaml.JPG)
  - [bash.JPG](01-intro-01/bash.JPG)
  - [терраформ.JPG](01-intro-01/терраформ.JPG)
+
 Задание №2
 
