@@ -1,3 +1,3 @@
 # netology_devops-13
 
-[01-intro-01](01-intro-01)
+[ДЗ по блоку "1.1. Введение в DevOps"](01-intro-01)
