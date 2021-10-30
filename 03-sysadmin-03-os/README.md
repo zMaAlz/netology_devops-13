@@ -14,3 +14,62 @@ chdir("/tmp")
 
 3- *Предположим, приложение пишет лог в текстовый файл. Этот файл оказался удален (deleted в lsof), однако возможности сигналом сказать приложению переоткрыть файлы или просто перезапустить приложение – нет. Так как приложение продолжает писать в удаленный файл, место на диске постепенно заканчивается. Основываясь на знаниях о перенаправлении потоков предложите способ обнуления открытого удаленного файла (чтобы освободить место на файловой системе).*
 
+*находим номер процесса и дескриптора lsof | grep 'deleted'
+*Командой sudo truncate -s 0 /proc/1576/fd/3 уменьшает размер файла
+
+4- *Занимают ли зомби-процессы какие-то ресурсы в ОС (CPU, RAM, IO)?*
+
+Процесс-зомби аппаратные ресурсы не занимает, но в таблице процессов за ним сохраняется PID. При достижении лимита записей все процессы пользователя, от имени которого выполняется создающий зомби родительский процесс, не будут способны создавать новые дочерние процессы.
+
+5- *В iovisor BCC есть утилита opensnoop...*
+
+![image](https://user-images.githubusercontent.com/87389868/139543139-5256a988-64f0-43a7-a6ac-d522ae407ea9.png)
+
+6- *Какой системный вызов использует uname -a? Приведите цитату из man по этому системному вызову, где описывается альтернативное местоположение в /proc, где можно узнать версию ядра и релиз ОС.*
+
+uname использует системный вызов uname(2).
+/proc/sys/kernel/{ostype, hostname, osrelease, version, domainname}
+
+7- *Чем отличается последовательность команд через ; и через && в bash? Есть ли смысл использовать в bash &&, если применить set -e?*
+
+&& - вторая команда выполняется только если первая завершиться без ошибок
+
+;- Оператор точка с запятой выполняет несколько команд одновременно последовательно
+
+set -e - не при использовании конвеера или используется оператор.
+
+8- *Из каких опций состоит режим bash set -euxo pipefail и почему его хорошо было бы использовать в сценариях?*
+
+e- Если установлено, оболочка завершает работу, когда простая команда в списке команд завершает ненулевое значение (FALSE). Этого не происходит в ситуациях, когда код выхода уже проверен (если, while, until, ||, &&)
+u- Рассматривает сброс (unset) переменной как ошибку при выполнении parameter expansion. Неинтерактивные оболочки завершают свое выполнение при такой ошибке.
+x- Режим отладки. Перед выполнением команды печатает её со всеми уже развернутыми подстановками и вычислениями.
+o- Устаналивает или снимает опцию по её длинному имени. Например set -o noglob. Если никакой опции не задано, то выводится список всех опций и их статус.
+pipefail - сценарий завершиться в случае ошибки не зависимо от наличия конвеера
+
+set -euxo pipefail в сценариях позволит получить всю необходимую для диагностики информацию в случае сбоя. 
+
+9- *Используя -o stat для ps, определите, какой наиболее часто встречающийся статус у процессов в системе. В man ps ознакомьтесь (/PROCESS STATE CODES) что значат дополнительные к основной заглавной буквы статуса процессов. Его можно не учитывать при расчете (считать S, Ss или Ssl равнозначными).*
+
+Чаще всего встречается S, после идет I.
+
+Here are the different values that the s, stat and state output specifiers (header "STAT" or "S") will display to describe the state of a process:
+
+               D    uninterruptible sleep (usually IO)
+               I    Idle kernel thread
+               R    running or runnable (on run queue)
+               S    interruptible sleep (waiting for an event to complete)
+               T    stopped by job control signal
+               t    stopped by debugger during the tracing
+               W    paging (not valid since the 2.6.xx kernel)
+               X    dead (should never be seen)
+               Z    defunct ("zombie") process, terminated but not reaped by its parent
+
+       For BSD formats and when the stat keyword is used, additional characters may be displayed:
+
+               <    high-priority (not nice to other users)
+               N    low-priority (nice to other users)
+               L    has pages locked into memory (for real-time and custom IO)
+               s    is a session leader
+               l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
+               +    is in the foreground process group
+
