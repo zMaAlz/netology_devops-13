@@ -37,7 +37,7 @@ WantedBy=multi-user.target
 
 3- *Установите в свою виртуальную машину Netdata. Воспользуйтесь готовыми пакетами для установки (sudo apt install -y netdata).*
 
-
+![image](https://user-images.githubusercontent.com/87389868/140527184-591941e7-d4f7-4dc0-919a-edca1ead7e7e.png)
 
 4- *Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?*
 
