@@ -27,6 +27,12 @@ WantedBy=multi-user.target
 
 2- *Ознакомьтесь с опциями node_exporter и выводом /metrics по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.*
 
+* cpu -	Exposes CPU statistics
+* loadavg -	Exposes load average.
+* diskstats -	Exposes disk I/O statistics.
+* filesystem -	Exposes filesystem statistics, such as disk space used.
+* meminfo	- Exposes memory statistics.
+* netstat	- Exposes network statistics from /proc/net/netstat. This is the same information as netstat -s.
 
 
 3- *Установите в свою виртуальную машину Netdata. Воспользуйтесь готовыми пакетами для установки (sudo apt install -y netdata).*
