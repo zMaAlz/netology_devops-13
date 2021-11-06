@@ -61,15 +61,6 @@ fs.nr_open = 1048576
 
 cgroups – механизм ядра, позволяющий ограничивать использование, вести учет и изолировать потребление системных ресурсов (ЦП, память, дисковый ввод/вывод, сеть и т. п.) на уровне коллекций процессов. Значение по умолчанию задается в файле /lib/systemd/system/user-.slice.d/10-defaults.conf
  
-  $ systemctl cat user-1000.slice
-           # /lib/systemd/system/user-.slice.d/10-defaults.conf
-           # ...
-           [Unit]
-           Description=User Slice of UID %j
-           After=systemd-user-sessions.service
-
-           [Slice]
-           TasksMax=33%
- 
+ ![image](https://user-images.githubusercontent.com/87389868/140604342-41535e2e-d148-4195-80e8-fb4964d7e027.png)
 
 Изменить ограничение можно увеличив значение TasksMax в блоке [Slice]. 
