@@ -3,26 +3,17 @@
 
 1- *На лекции мы познакомились с node_exporter. В демонстрации его исполняемый файл запускался в background. Этого достаточно для демо, но не для настоящей production-системы, где процессы должны находиться под внешним управлением. Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter*
 
-Создаем файл в /etc/systemd/system/node_exporter.service
-Содержание:
-[Unit]
-Description=Metric collector
-#Documentation=
+Создаем файл в /etc/systemd/system/node_exporter.service Содержание:
+![image](https://user-images.githubusercontent.com/87389868/140639975-8cf518e5-314f-4c88-b3f4-4797f6f01c54.png)
 
-[Service]
-EnvironmentFile=-/home/vagrant/node_exporter-1.2.2.linux-amd64/node.config
-WorkingDirectory=/home/vagrant/node_exporter-1.2.2.linux-amd64
-ExecStart=/home/vagrant/node_exporter-1.2.2.linux-amd64/node_exporter
-KillMode=process
-Restart=on-failure
-User=vagrant
+EnvironmentFile:
+![image](https://user-images.githubusercontent.com/87389868/140640083-891c808f-8e23-4624-aa71-9a8fa01c0aca.png)
 
-[Install]
-WantedBy=multi-user.target
 
 добавляем в автозапуск systemctl enable node_exporter.service
 
-![image](https://user-images.githubusercontent.com/87389868/140399226-796a9345-3238-49f2-8907-8cabaac1d451.png)
+![image](https://user-images.githubusercontent.com/87389868/140640251-43611abe-d4eb-4234-9eb4-13a463e0c1b3.png)
+
 
 
 2- *Ознакомьтесь с опциями node_exporter и выводом /metrics по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.*
