@@ -52,15 +52,103 @@
 
 4-*Используя fdisk, разбейте первый диск на 2 раздела: 2 Гб, оставшееся пространство.*
 
+```
+vagrant@vagrant:~$ sudo fdisk /dev/sdb
 
+Command (m for help): g
+Created a new GPT disklabel (GUID: 19A5DFCF-04B5-3444-B8CC-22E24B7A8F9E).
+
+Command (m for help): n
+Partition number (1-128, default 1): 1
+First sector (2048-5242846, default 2048): 2048
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-5242846, default 5242846): +2G
+
+Created a new partition 1 of type 'Linux filesystem' and of size 2 GiB.
+
+Command (m for help): n
+Partition number (2-128, default 2): 2
+First sector (4196352-5242846, default 4196352): 4196352
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (4196352-5242846, default 5242846): 5242846
+
+Created a new partition 2 of type 'Linux filesystem' and of size 511 MiB.
+
+Command (m for help): p
+Disk /dev/sdb: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+Disk model: VBOX HARDDISK
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: gpt
+Disk identifier: A2706CBF-25BC-D841-8ADE-93EA1292A511
+
+Device       Start     End Sectors  Size Type
+/dev/sdb1     2048 4196351 4194304    2G Linux filesystem
+/dev/sdb2  4196352 5242846 1046495  511M Linux filesystem
+
+```
 
 5-*Используя sfdisk, перенесите данную таблицу разделов на второй диск.*
 
+```
+vagrant@vagrant:~/backup$ sudo sfdisk --dump /dev/sdb>sdb.dump
+vagrant@vagrant:~/backup$ sudo sfdisk /dev/sdc<sdb.dump
+Checking that no-one is using this disk right now ... OK
+
+Disk /dev/sdc: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+Disk model: VBOX HARDDISK
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+>>> Script header accepted.
+>>> Script header accepted.
+>>> Script header accepted.
+>>> Script header accepted.
+>>> Script header accepted.
+>>> Script header accepted.
+>>> Created a new GPT disklabel (GUID: A2706CBF-25BC-D841-8ADE-93EA1292A511).
+/dev/sdc1: Created a new partition 1 of type 'Linux filesystem' and of size 2 GiB.
+/dev/sdc2: Created a new partition 2 of type 'Linux filesystem' and of size 511 MiB.
+/dev/sdc3: Done.
+
+New situation:
+Disklabel type: gpt
+Disk identifier: A2706CBF-25BC-D841-8ADE-93EA1292A511
+
+Device       Start     End Sectors  Size Type
+/dev/sdc1     2048 4196351 4194304    2G Linux filesystem
+/dev/sdc2  4196352 5242846 1046495  511M Linux filesystem
+
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+```
+
 6-*Соберите mdadm RAID1 на паре разделов 2 Гб.*
 
+```
+vagrant@vagrant:~/backup$ sudo mdadm --create /dev/md0 -l 1 -n 2 /dev/sd{c1,b1}
+mdadm: Note: this array has metadata at the start and
+    may not be suitable as a boot device.  If you plan to
+    store '/boot' on this device please ensure that
+    your boot-loader understands md/v1.x metadata, or use
+    --metadata=0.90
+Continue creating array? Y
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md0 started.
+
+```
+
 7-*Соберите mdadm RAID0 на второй паре маленьких разделов.*
+```
+vagrant@vagrant:~/backup$ sudo mdadm --create /dev/md1 -l 0 -n 2 /dev/sd{c2,b2}
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md1 started.
+```
 
 8-*Создайте 2 независимых PV на получившихся md-устройствах.*
+
+
 
 9-*Создайте общую volume-group на этих двух PV.*
 
