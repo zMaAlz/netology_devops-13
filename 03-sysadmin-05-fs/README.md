@@ -147,10 +147,19 @@ mdadm: array /dev/md1 started.
 ```
 
 8-*Создайте 2 независимых PV на получившихся md-устройствах.*
+```
+vagrant@vagrant:~$ sudo pvcreate /dev/md0
+  Physical volume "/dev/md0" successfully created.
 
-
+vagrant@vagrant:~$ sudo pvcreate /dev/md1
+  Physical volume "/dev/md1" successfully created.
+```
 
 9-*Создайте общую volume-group на этих двух PV.*
+
+```
+
+```
 
 10-*Создайте LV размером 100 Мб, указав его расположение на PV с RAID0*
 
