@@ -236,15 +236,42 @@ sdc                    8:32   0  2.5G  0 disk
 
 15-*Протестируйте целостность файла:*
 ```
+vagrant@vagrant:~$ gzip -t /tmp/new/test.gz
+vagrant@vagrant:~$ echo $?
+0
 
 ```
 16-*Используя pvmove, переместите содержимое PV с RAID0 на RAID1.*
-
+```
+vagrant@vagrant:~$ sudo pvmove /dev/md1 /dev/md0
+  /dev/md1: Moved: 16.00%
+  /dev/md1: Moved: 100.00%
+```
 17-*Сделайте --fail на устройство в вашем RAID1 md.*
-
+```
+vagrant@vagrant:~$ sudo mdadm --fail /dev/md0 /dev/sdb1
+mdadm: set /dev/sdb1 faulty in /dev/md0
+```
 18-*Подтвердите выводом dmesg, что RAID1 работает в деградированном состоянии.*
-
+```
+vagrant@vagrant:~$ dmesg | tail
+[26250.223968] 20:29:53.247043 control  Session 0 is about to close ...
+[26250.224484] 20:29:53.248014 control  Stopping all guest processes ...
+[26250.224824] 20:29:53.248708 control  Closing all guest files ...
+[26250.225220] 20:29:53.249111 control  vbglR3GuestCtrlDetectPeekGetCancelSupport: Supported (#1)
+[26250.402143] e1000: eth0 NIC Link is Down
+[26254.436763] e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+[26257.445956] 17:01:09.977729 timesync vgsvcTimeSyncWorker: Radical host time change: 73 879 439 000 000ns (HostNow=1 637 168 469 977 000 000 ns HostLast=1 637 094 590 538 000 000 ns)
+[26267.448008] 17:01:19.979820 timesync vgsvcTimeSyncWorker: Radical guest time change: 73 879 510 734 000ns (GuestNow=1 637 168 479 979 807 000 ns GuestLast=1 637 094 600 469 073 000 ns fSetTimeLastLoop=true )
+[26841.513188] md/raid1:md0: Disk failure on sdb1, disabling device.
+               md/raid1:md0: Operation continuing on 1 devices.
+```
 19-*Протестируйте целостность файла, несмотря на "сбойный" диск он должен продолжать быть доступен:*
-
+```
+vagrant@vagrant:~$ gzip -t /tmp/new/test.gz
+vagrant@vagrant:~$ echo $?
+0
+```
 20-*Погасите тестовый хост, vagrant destroy.*
 
+done
