@@ -14,9 +14,9 @@ c = a + b
 ### Вопросы:
 | Вопрос  | Ответ |
 | ------------- | ------------- |
-| Какое значение будет присвоено переменной `c`?  | ???  |
-| Как получить для переменной `c` значение 12?  | ???  |
-| Как получить для переменной `c` значение 3?  | ???  |
+| Какое значение будет присвоено переменной `c`?  | Возникнет ошибка, т.к. мы пытаемся сложить стороку с цислом (TypeError: unsupported operand type(s) for +: 'int' and 'str')  |
+| Как получить для переменной `c` значение 12?  |  Принудительно задать тип данных в переменной "а" (c = str(a) + b)  |
+| Как получить для переменной `c` значение 3?  | Принудительно задать тип данных в переменной "b" (c = a + int(b)) |
 
 ## Обязательная задача 2
 Мы устроились на работу в компанию, где раньше уже был DevOps Engineer. Он написал скрипт, позволяющий узнать, какие файлы модифицированы в репозитории, относительно локальных изменений. Этим скриптом недовольно начальство, потому что в его выводе есть не все изменённые файлы, а также непонятен полный путь к директории, где они находятся. Как можно доработать скрипт ниже, чтобы он исполнял требования вашего руководителя?
@@ -38,12 +38,55 @@ for result in result_os.split('\n'):
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import os
+path_repo="/mnt/shares/Git/scripts/"
+bash_command = [f"cd {path_repo}", "git status"]
+result_os = os.popen(' && '.join(bash_command)).read()
+is_change = False
+print('Modified:')
+for result in result_os.split('\n'):
+    if result.find('modified') == 1:
+        prepare_result = result.replace('\tmodified:   ', '')
+        print(path_repo+prepare_result)
+print('New files:')
+for result in result_os.split('\n'):
+    if result.find('new file') == 1:
+        new_result = result.replace('\tnew file:   ', '')
+        print(path_repo+new_result)
+        
 ```
 
 ### Вывод скрипта при запуске при тестировании:
-```
-???
+```bash
+admin2@ubuntu-srv:/mnt/shares/Git/scripts$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   KillSAP.py
+        new file:   ch_file_repo.py
+        new file:   new/Ping.py
+        new file:   test_ping.sh
+        new file:   test_url.sh
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   ch_file_repo.py
+        modified:   new/Ping.py
+
+admin2@ubuntu-srv:/mnt/shares/Git/scripts$ python3 ch_file_repo.py
+Modified:
+/mnt/shares/Git/scripts/ch_file_repo.py
+/mnt/shares/Git/scripts/new/Ping.py
+New files:
+/mnt/shares/Git/scripts/KillSAP.py
+/mnt/shares/Git/scripts/ch_file_repo.py
+/mnt/shares/Git/scripts/new/Ping.py
+/mnt/shares/Git/scripts/test_ping.sh
+/mnt/shares/Git/scripts/test_url.sh
 ```
 
 ## Обязательная задача 3
