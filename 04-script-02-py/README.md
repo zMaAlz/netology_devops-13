@@ -94,12 +94,38 @@ New files:
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import os
+path_repo=input("Укажите путь к репозиторию: ")
+bash_command = [f"cd {path_repo}", "git status"]
+result_os = os.popen(' && '.join(bash_command)).read()
+is_change = False
+print('Modified:')
+for result in result_os.split('\n'):
+    if result.find('modified') == 1:
+        prepare_result = result.replace('\tmodified:   ', '')
+        print(path_repo+prepare_result)
+print('New files:')
+for result in result_os.split('\n'):
+    if result.find('new file') == 1:
+        new_result = result.replace('\tnew file:   ', '')
+        print(path_repo+new_result)
+        
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+admin2@ubuntu-srv:/mnt/shares/Git/scripts$ python3 ch_file_repo.py
+Укажите путь к репозиторию: /mnt/shares/Git/scripts
+Modified:
+/mnt/shares/Git/scriptsch_file_repo.py
+/mnt/shares/Git/scriptsnew/Ping.py
+New files:
+/mnt/shares/Git/scriptsKillSAP.py
+/mnt/shares/Git/scriptsch_file_repo.py
+/mnt/shares/Git/scriptsnew/Ping.py
+/mnt/shares/Git/scriptstest_ping.sh
+/mnt/shares/Git/scriptstest_url.sh
 ```
 
 ## Обязательная задача 4
@@ -107,12 +133,72 @@ New files:
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import os
+def dnstoip (name):
+    ipaddres = os.popen('nslookup ' + name).read()
+    listns = ipaddres.split('\n')
+    return listns[5]
+
+def file_open_write (name):
+    fileIp = open('ipsrv.csv', 'a')
+    writetofile = name + '/n'
+    fileIp.write(writetofile)
+    fileIp.close()
+    return print(f'данные {name} записаны')
+
+DNSdict = {}
+
+
+if os.path.isfile('ipsrv.csv') == False:
+    delfile = open('ipsrv.csv', 'w')
+    delfile.close()
+else:
+    dictfile = open('ipsrv.csv', 'r').read().split('/n')
+    #print("dictfile ",dictfile)
+    for a in dictfile:
+        lista = a.split(" ")
+        #print(lista[0])
+        #print(lista[-1])
+        DNSdict[lista[0]] = lista[-1]
+
+address_srv = ['drive.google.com', 'googlemail.l.google.com', 'google.com']
+
+print('Прошлые адреса: ',DNSdict)
+print('*********************************')
+for i in address_srv:
+    addres_and_ip = dnstoip(i)
+    ip_without_addres = addres_and_ip.replace('Address: ', '')
+    if i in DNSdict.keys():
+        if ip_without_addres != DNSdict[i]:
+            print(f'[ERROR] {i} IP mismatch: {DNSdict[i]} {ip_without_addres}')
+            forfile = i + " " + ip_without_addres
+            file_open_write(forfile)
+        else:
+            print(f"IP адрес у {i} не изменился")
+    else:
+        forfile = i + " " + ip_without_addres
+        file_open_write(forfile)
+
+#os.system('echo -n >ipsrv.csv')
+
 ```
 
 ### Вывод скрипта при запуске при тестировании:
-```
-???
+```bash
+admin2@ubuntu-srv:/mnt/shares/Git/scripts$ python3 chek_ip.py
+Прошлые адреса:  {'': ''}
+*********************************
+данные drive.google.com 142.251.1.139 записаны
+данные googlemail.l.google.com 64.233.161.17 записаны
+данные google.com 108.177.14.101 записаны
+admin2@ubuntu-srv:/mnt/shares/Git/scripts$ python3 chek_ip.py
+Прошлые адреса:  {'drive.google.com': '142.251.1.139', 'googlemail.l.google.com': '64.233.161.17', 'google.com': '108.177.14.101', '': ''}
+*********************************
+IP адрес у drive.google.com не изменился
+IP адрес у googlemail.l.google.com не изменился
+[ERROR] google.com IP mismatch: 108.177.14.101 108.177.14.138
+данные google.com 108.177.14.138 записаны
 ```
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
