@@ -20,9 +20,8 @@
 
 VirtualBox
 
-```bash
+![vb3](https://user-images.githubusercontent.com/87389868/150853329-90eb565f-7554-4a81-b7cf-ed208e0823e2.JPG)
 
-```
 
 Vagrant
 
@@ -52,6 +51,7 @@ docker ps
 ```
 
 Ответ:
+<<<<<<< HEAD
 
 ```bash
 admin2@ubuntu-srv:~/ansible$ ansible-playbook provision.yml --ask-pass
