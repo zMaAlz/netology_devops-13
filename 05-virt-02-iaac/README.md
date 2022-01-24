@@ -51,7 +51,6 @@ docker ps
 ```
 
 Ответ:
-<<<<<<< HEAD
 
 ```bash
 admin2@ubuntu-srv:~/ansible$ ansible-playbook provision.yml --ask-pass
