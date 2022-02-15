@@ -28,5 +28,8 @@ admin2@ubuntu-srv:~/packer$ yc compute image list
 
 ## Задача 2
 
+![2](https://user-images.githubusercontent.com/87389868/154150228-d949d40c-9e5f-4f74-aed5-c8389a8e6ed8.JPG)
 
 ## Задача 3
+
+![3](https://user-images.githubusercontent.com/87389868/154150252-82a19c1b-214c-4bb3-9ab3-9425f436eebc.JPG)
