@@ -41,14 +41,25 @@ services:
 
 * итоговый список БД после выполнения пунктов выше
 
+![image](https://user-images.githubusercontent.com/87389868/158032327-a3c4ac0f-f4bc-4ab4-8968-e3699dbd0525.png)
+
 
 * описание таблиц (describe)
+![image](https://user-images.githubusercontent.com/87389868/158032362-783174f7-b2f3-4979-809b-8558d732e1c2.png)
+![image](https://user-images.githubusercontent.com/87389868/158032375-40300940-d058-4281-bc51-db0c5cdbd9e7.png)
+![image](https://user-images.githubusercontent.com/87389868/158032390-26a98e38-277e-4fc3-98fc-8bf6e0868dc1.png)
+![image](https://user-images.githubusercontent.com/87389868/158032403-8523e376-8c1d-49af-9791-92496f55cf8a.png)
+
 
 * SQL-запрос для выдачи списка пользователей с правами над таблицами test_db
 
 ```sql
 SELECT * FROM information_schema.table_privileges where table_name='clients'  or table_name='orders';
+```
 
+* список пользователей с правами над таблицами test_db
+
+```sql
 grantor|grantee         |table_catalog|table_schema|table_name|privilege_type|is_grantable|with_hierarchy|
 -------+----------------+-------------+------------+----------+--------------+------------+--------------+
 admin2 |admin2          |test_db      |public      |orders    |INSERT        |YES         |NO            |
@@ -89,8 +100,6 @@ admin2 |test-simple-user|test_db      |public      |clients   |UPDATE        |NO
 admin2 |test-simple-user|test_db      |public      |clients   |DELETE        |NO          |NO            |
 
 ```
-
-* список пользователей с правами над таблицами test_db
 
 ## Задача 3
 
