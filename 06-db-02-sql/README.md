@@ -93,7 +93,7 @@ Access method: heap
 * SQL-запрос для выдачи списка пользователей с правами над таблицами test_db
 
 ```sql
-SELECT * FROM information_schema.table_privileges where table_name='clients'  or table_name='orders';
+SELECT * FROM information_schema.table_privileges where table_name='clients' or table_name='orders';
 ```
 
 * список пользователей с правами над таблицами test_db
