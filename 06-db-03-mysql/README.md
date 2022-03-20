@@ -42,21 +42,22 @@ mysql> select * from orders where price>300;
 
 ```bash
 mysql> CREATE USER 'test'@'%' IDENTIFIED BY 'test-pass' PASSWORD EXPIRE INTERVAL 180 DAY;
-Query OK, 0 rows affected (0.00 sec)
+Query OK, 0 rows affected (0.01 sec)
 
-mysql> ALTER USER 'test'@'%' WITH MAX_QUERIES_PER_HOUR 100 MAX_USER_CONNECTIONS 3 comment "Pretty James";
-Query OK, 0 rows affected (0.00 sec)
+mysql> ALTER USER 'test'@'%' WITH MAX_QUERIES_PER_HOUR 100 MAX_USER_CONNECTIONS 3 ATTRIBUTE '{"surname": "Pretty", "name": "James"}';
+Query OK, 0 rows affected (0.01 sec)
 
 mysql> grant select on * to 'test';
 Query OK, 0 rows affected (0.01 sec)
 
 mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test';
-+------+------+-----------------------------+
-| USER | HOST | ATTRIBUTE                   |
-+------+------+-----------------------------+
-| test | %    | {"comment": "Pretty James"} |
-+------+------+-----------------------------+
++------+------+----------------------------------------+
+| USER | HOST | ATTRIBUTE                              |
++------+------+----------------------------------------+
+| test | %    | {"name": "James", "surname": "Pretty"} |
++------+------+----------------------------------------+
 1 row in set (0.00 sec)
+
 ```
 
 ## Задача 3
