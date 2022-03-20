@@ -62,9 +62,6 @@ mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test';
 ## Задача 3
 
 ```bash
-mysql> SET profiling = 1;
-Query OK, 0 rows affected, 1 warning (0.00 sec)
-
 mysql> show engines;
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
 | Engine             | Support | Comment                                                        | Transactions | XA   | 
@@ -97,6 +94,10 @@ mysql> show table status
 Время выполнения запроса на изменение движка MyISAM - 0.11484950 (alter table orders engine = MyISAM). alter table orders engine = InnoDB, время выполнения - 0.14736625.
 
 ```bash
+mysql> SET profiling = 1;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+
 mysql> SHOW PROFILES;
 +----------+------------+------------------------------------+
 | Query_ID | Duration   | Query                              |
