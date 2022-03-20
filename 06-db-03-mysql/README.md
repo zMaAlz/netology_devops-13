@@ -62,6 +62,9 @@ mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test';
 ## Задача 3
 
 ```bash
+mysql> SET profiling = 1;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
 mysql> show engines;
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
 | Engine             | Support | Comment                                                        | Transactions | XA   | 
