@@ -41,6 +41,15 @@ mysql> select * from orders where price>300;
 ## Задача 2
 
 ```bash
+mysql> CREATE USER 'test'@'%' IDENTIFIED BY 'test-pass' PASSWORD EXPIRE INTERVAL 180 DAY;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> ALTER USER 'test'@'%' WITH MAX_QUERIES_PER_HOUR 100 MAX_USER_CONNECTIONS 3 comment "Pretty James";
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> grant select on * to 'test';
+Query OK, 0 rows affected (0.01 sec)
+
 mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test';
 +------+------+-----------------------------+
 | USER | HOST | ATTRIBUTE                   |
@@ -70,7 +79,19 @@ Savepoints |
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+       
 9 rows in set (0.00 sec)
 
+mysql> show table status
+    -> ;
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+-------------+------------+--------------------+----------+----------------+---------+     
+| Name   | Engine | Version | Row_format | Rows | Avg_row_length | Data_length | Max_data_length | Index_length | Data_free | Auto_increment | Create_time         | Update_time | Check_time | Collation          | Checksum | Create_options | Comment |     
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+-------------+------------+--------------------+----------+----------------+---------+     
+| orders | InnoDB |      10 | Dynamic    |    5 |           3276 |       16384 |               0 |            0 |         0 |              6 | 2022-03-19 17:52:33 | NULL        | NULL       | utf8mb4_0900_ai_ci |     NULL |                |         |     
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+-------------+------------+--------------------+----------+----------------+---------+     
+1 row in set (0.00 sec)
 ```
+
+По умолчанию в версии 8 используется движок - InnoDB.
+
+Время выполнения запроса на изменение движка MyISAM - 0.11484950 (alter table orders engine = MyISAM). alter table orders engine = InnoDB, время выполнения - 0.14736625.
 
 ```bash
 mysql> SHOW PROFILES;
@@ -90,6 +111,8 @@ mysql> SHOW PROFILES;
 9 rows in set, 1 warning (0.00 sec)
 
 ```
+
+
 
 ## Задача 4
 
