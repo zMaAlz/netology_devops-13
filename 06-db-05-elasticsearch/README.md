@@ -2,7 +2,7 @@
 
 ## Задача 1
 
-При попытке загрузить архив с оф.сайте возникает ошибка доступа.
+При попытке загрузить архив с оф.сайта возникает ошибка доступа.
 
 ```bash
 Step 3/4 : RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.1.1-linux-x86_64.tar.gz && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.1.1-linux-x86_64.tar.gz.sha512 && shasum -a 512 -c elasticsearch-8.1.1-linux-x86_64.tar.gz.sha512 && tar -xzf elasticsearch-8.1.1-linux-x86_64.tar.gz && cd elasticsearch-8.1.1/
@@ -59,7 +59,7 @@ https://hub.docker.com/repository/docker/zmaalz/elasticsearch
 
 ## Задача 2
 
-список индексов и их статусов:
+список индексов и их статусы:
 
 ```bash
 admin2@ubuntu-srv:~/elasticsearch$ curl -X GET http://localhost:9200/_cat/indices
@@ -103,7 +103,7 @@ curl -X DELETE http://localhost:9200/ind-3
 
 ## Задача 3
 
-Создание репозитория:
+регистрация дериктории как snapshot repository:
 
 ```bash
 admin2@ubuntu-srv:~/elasticsearch$ curl -X PUT http://localhost:9200/_snapshot/netology_backup -H 'Content-Type: application/json' -d '

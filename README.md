@@ -47,3 +47,5 @@
 [Домашнее задание к занятию "6.4. PostgreSQL"](06-db-04-postgresql)
 
 [Домашнее задание к занятию "6.5. Elasticsearch"](06-db-05-elasticsearch)
+
+[Домашнее задание к занятию "6.6. Troubleshooting"](06-db-06-troobleshooting)
