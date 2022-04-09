@@ -49,3 +49,5 @@
 [Домашнее задание к занятию "6.5. Elasticsearch"](06-db-05-elasticsearch)
 
 [Домашнее задание к занятию "6.6. Troubleshooting"](06-db-06-troobleshooting)
+
+[Домашнее задание к занятию "7.1. Инфраструктура как код"](07-terraform-01-intro)
