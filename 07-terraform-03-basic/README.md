@@ -57,6 +57,9 @@ terraform init \
     -backend-config="secret_key=YC.....fF" 
 ```
 
+![1](https://user-images.githubusercontent.com/87389868/163713354-44ba784d-f228-4841-bc41-9048e9684ab0.JPG)
+
+
 ## Задача 2. Инициализируем проект и создаем воркспейсы
 
 Вывод команды terraform workspace list:
