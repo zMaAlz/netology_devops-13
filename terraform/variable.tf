@@ -18,3 +18,4 @@ variable "yc_secret_key" {
 variable "yc_access_key" {
   default = ""
 }
+
