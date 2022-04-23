@@ -8,7 +8,7 @@ provider "yandex" {
 locals { 
   vm_instans_name_platform = { 
     stage = { 
-      "vm02" = { platform = "standard-v1", core_fraction = 10, cores = 2, memory = 2, size = 20 } 
+      "vm02" = { platform = "standard-v1", core_fraction = 5, cores = 2, memory = 2, size = 20 } 
      } 
     prod = {
     "vm02" = { platform = "standard-v2", core_fraction = 10, cores = 2, memory = 2, size = 40 } 
@@ -52,3 +52,4 @@ resource "yandex_compute_instance" "vm_app" {
     ssh-keys = "${file("~/.ssh/id_rsa.pub")}"
   }
 }
+
