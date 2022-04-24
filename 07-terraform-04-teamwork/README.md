@@ -18,7 +18,7 @@
 
 Попробовал создать собственные "модули" (подключаемые файлы формата tf). Явных ошибок в коде нет, но при запуске terraform init возникает ошибка проверки плагина.
 
-```
+```bash
 Initializing modules...
 
 Initializing the backend...
@@ -38,4 +38,21 @@ https://www.terraform.io/docs/cli/plugins/signing.html
 │ Could not retrieve the list of available versions for provider hashicorp/yandex: could not connect to registry.terraform.io: Failed to request discovery document: 403 Forbidden
 ```
 
-[Файл конфигурации](terraform)
+Блок вызовы модуля выглядит следующим образом:
+
+```terraform
+module "module_network" {
+  source  = "./module/module_network"  
+}
+
+
+module "module_server" {
+  count = 3
+  source  = "./module/module_server"
+#  name = "vm-${each.key}"
+  network_interface {
+    subnet_id = var.subnet_id
+}
+```
+
+[Все файлы конфигурации](terraform)
