@@ -19,4 +19,10 @@ variable "yc_access_key" {
   default = ""
 }
 
+variable "network_id" {
+  default = ""
+}
 
+variable "subnet_id" {
+  default = ""
+}
