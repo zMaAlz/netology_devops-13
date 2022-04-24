@@ -9,6 +9,7 @@
 ## Задача 2. Написать серверный конфиг для атлантиса
 
 [atlantis.yaml](atlantis/atlantis.yaml)
+
 [server.yaml](atlantis/server.yaml)
 
 
