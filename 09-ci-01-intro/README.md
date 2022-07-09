@@ -1,24 +1,38 @@
 # Домашнее задание к занятию "09.01 Жизненный цикл ПО"
 
-* Задачи типа bug:
+### Задачи типа bug:
+
 
 Open -> On reproduce
+
 On reproduce -> Open, Done reproduce
+
 Done reproduce -> On fix
+
 On fix -> On reproduce, Done fix
+
 Done fix -> On test
+
 On test -> On fix, Done
+
 Done -> Closed, Open
 
+![1](https://user-images.githubusercontent.com/87389868/178111067-1dbd7068-5918-46dc-a9db-0ed127b99680.jpg)
 
 
-* Остальные задачи:
+### Остальные задачи:
+
 
 Open -> On develop
+
 On develop -> Open, Done develop
+
 Done develop -> On test
+
 On test -> On develop, Done
+
 Done -> Closed, Open
-Создать задачу с типом bug, попытаться провести его по всему workflow до Done. Создать задачу с типом epic, к ней привязать несколько задач с типом task, провести их по всему workflow до Done. При проведении обеих задач по статусам использовать kanban. Вернуть задачи в статус Open. Перейти в scrum, запланировать новый спринт, состоящий из задач эпика и одного бага, стартовать спринт, провести задачи до состояния Closed. Закрыть спринт.
+
+![2](https://user-images.githubusercontent.com/87389868/178111071-b5ee0811-4eb2-47df-8703-059f8aba47a1.jpg)
 
 
