@@ -1,0 +1,139 @@
+# Max virtual memory areas vm.max_map_count must be least 262144
+# sysctl -w vm.max_map_count=262144
+
+version: '3.8'
+networks:
+  monitoring:
+    driver: bridge
+services:
+  elasticsearch-hot:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: elasticsearch-hot
+    volumes:
+      # - ./src/elasticsearch-hot/conf/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./src/elasticsearch-hot/data:/usr/share/elasticsearch/data:z
+    environment:
+      - node.name=elasticsearch-hot
+      - cluster.name=${CLUSTER_NAME}
+      - network.host=0.0.0.0
+      - cluster.initial_master_nodes=elasticsearch-hot,elasticsearch-warm
+      - discovery.seed_hosts=elasticsearch-warm
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.license.self_generated.type=${LICENSE}
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - ELASTIC_USERNAME=elastic
+#      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    mem_limit: ${MEM_LIMIT}  
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536  
+    ports:
+      - ${ES_PORT}:9200
+      - 9300:9300
+    restart: unless-stopped 
+    networks: 
+      - monitoring    
+  elasticsearch-warm:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: elasticsearch-warm
+    volumes:
+      # - ./src/elasticsearch-warm/conf/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./src/elasticsearch-warm/data:/usr/share/elasticsearch/data:z
+    environment:
+      - node.name=elasticsearch-warm
+      - cluster.name=${CLUSTER_NAME}
+      - network.host=0.0.0.0
+      - cluster.initial_master_nodes=elasticsearch-hot,elasticsearch-warm
+      - discovery.seed_hosts=elasticsearch-hot
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.license.self_generated.type=${LICENSE}
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - ELASTIC_USERNAME=elastic
+#      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}      
+    mem_limit: ${MEM_LIMIT}  
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: unless-stopped 
+    networks: 
+      - monitoring
+    depends_on:
+      - elasticsearch-hot    
+  logstash:
+    image: logstash:${STACK_VERSION}
+    container_name: logstash
+    volumes:
+      - ./src/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./src/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+      # - LOGSTASH_INTERNAL_PASSWORD=${LOGSTASH_INTERNAL_PASSWORD}
+    ports:
+      - 5044:5044
+      - 5046:5046
+#      - 50000:50000/tcp
+#      - 50000:50000/udp
+      - 9600:9600
+    restart: unless-stopped 
+    networks: 
+      - monitoring
+    depends_on:
+      - elasticsearch-hot
+      - elasticsearch-warm   
+  kibana:
+    image: kibana:${STACK_VERSION}
+    container_name: kibana
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_URL: "http://elasticsearch-hot:9200"
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch-hot:9200","http://elasticsearch-warm:9200"]'
+      monitoring.ui.container.elasticsearch.enabled: true
+      xpack.security.enabled: false
+      ssl.verificationMode: false
+      SERVER_HOST: "0.0.0.0"
+    volumes:
+     - ./src/kibana/data:/usr/share/kibana/data:z
+#     - ./src/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    ports:
+      - ${KIBANA_PORT}:5601
+    restart: unless-stopped 
+    networks: 
+      - monitoring
+    depends_on:
+      - elasticsearch-hot
+      - elasticsearch-warm
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
+        ]
+      interval: 100s
+      timeout: 10s
+      retries: 120      
+  filebeat:
+    image: elastic/filebeat:${STACK_VERSION}
+    container_name: filebeat
+    privileged: true
+    user: root
+    volumes:
+      - ./src/filebeat/config/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - "--strict.perms=false"
+    restart: unless-stopped 
+    networks: 
+      - monitoring
+    depends_on:
+      - logstash
