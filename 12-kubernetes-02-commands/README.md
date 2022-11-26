@@ -42,10 +42,20 @@ hello-node-697897c86-fwhgz   1/1     Running   0          92s
 * пользователь может просматривать логи подов и их конфигурацию (kubectl logs pod <pod_id>, kubectl describe pod <pod_id>)
 </details>
 
-[](src/Deployment_hello-node.yaml)
-[](src/Namespaces_developnemt.yaml)
-[](src/Role.yaml)
-[](src/RoleBinding.yaml)
+```bash
+[kubadmin@srv1 minikube]$ kubectl apply -f Deployment_hello-node.yaml
+[kubadmin@srv1 minikube]$ kubectl apply -f Namespaces_developnemt.yaml
+[kubadmin@srv1 minikube]$ kubectl apply -f Role.yaml)
+[kubadmin@srv1 minikube]$ kubectl apply -f RoleBinding.yaml)
+```
+
+[Deployment_hello-node.yaml](src/Deployment_hello-node.yaml)
+
+[Namespaces_developnemt.yaml](src/Namespaces_developnemt.yaml)
+
+[Role.yaml](src/Role.yaml)
+
+[RoleBinding.yaml](src/RoleBinding.yaml)
 
 
 ```bash
