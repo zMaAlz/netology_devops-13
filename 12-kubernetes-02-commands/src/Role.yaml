@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: app-namespace
+  name: pod-reader
+  labels: 
+     minikube.cluster/dev-role: "true"
+rules:
+- apiGroups: [""] 
+  resources: ["pods", "pods/log", "pods/status"]
+  verbs: ["get", "watch", "list"]  

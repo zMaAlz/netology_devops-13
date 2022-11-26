@@ -1,0 +1,33 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      app: hello-node
+    name: hello-node
+    namespace: app-namespace
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    selector:
+      matchLabels:
+        app: hello-node
+    template:
+      metadata:
+        labels:
+          app: hello-node
+      spec:
+        containers:
+        - image: k8s.gcr.io/echoserver:1.4
+          name: echoserver
+          volumeMounts:
+            - mountPath: /opt/src
+              name: cache-vol
+        volumes:
+          - name: cache-vol
+            emptyDir: 
+              sizeLimit: 500Mi
+kind: List
+metadata:
+  resourceVersion: ""
