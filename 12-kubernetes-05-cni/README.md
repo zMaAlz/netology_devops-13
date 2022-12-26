@@ -49,7 +49,7 @@ PING 10.233.107.130 (10.233.107.130) 56(84) bytes of data.
 64 bytes from 10.233.107.130: icmp_seq=2 ttl=62 time=0.749 ms
 ```
 
-Применена политика ["netology-network-policy"](src/NetworkPolicy.yaml). Доступ к подсетям отличным от 10.233.0.0/16 недоступен.
+Применена политика ["netology-network-policy"](src/NetworkPolicy.yaml). Доступ к подсетям отличным от 10.233.0.0/16 ограничен.
 
 ```bash
 
