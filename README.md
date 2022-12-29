@@ -111,3 +111,5 @@
 [Домашнее задание к занятию "12.5 Сетевые решения CNI"](12-kubernetes-05-cni)
 
 [Домашнее задание к занятию "13.1 контейнеры, поды, deployment, statefulset, services, endpoints"](13-kubernetes-config-01-objects)
+
+[Домашнее задание к занятию "13.2 разделы и монтирование"](13-kubernetes-config-02-mounts)

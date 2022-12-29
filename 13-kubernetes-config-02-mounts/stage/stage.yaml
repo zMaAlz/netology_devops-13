@@ -1,0 +1,146 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: stage
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stage-front-back
+  name: stage-front-back
+  namespace: stage
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: stage-front-back
+  template:
+    metadata:
+      labels:
+        app: stage-front-back
+    spec:
+      containers:
+      - image: zmaalz/frontend:latest
+        name: stage-frontend
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2048Mi
+          requests:
+            cpu: 200m
+            memory: 512Mi
+        volumeMounts:
+          - mountPath: /static
+            name: static-volume
+      - image: zmaalz/backend:latest
+        name: stage-backend
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /static
+            name: static-volume
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sleep", "10"]
+          preStop:
+            exec:
+              command: ["sleep", "20"]
+      volumes:
+        - name: static-volume
+          emptyDir:
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stage-db
+  name: stage-db
+  namespace: stage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stage-db
+  template:
+    metadata:
+      labels:
+        app: stage-db
+    spec:
+      containers:
+      - image: postgres:13-alpine
+        name: db
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: "/db"
+            name: stage-db
+        envFrom:
+          - secretRef:
+              name: postgres-secret-stage
+        env:
+          - name: POSTGRES_DB
+            value: news
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sleep", "10"]
+          preStop:
+            exec:
+              command: ["sleep", "20"]
+      nodeSelector:
+        app: sf
+      volumes:
+        - name: stage-db
+          persistentVolumeClaim:
+            claimName: pvc-stage-db
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-stage-db
+  namespace: stage
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-stage-db
+  namespace: stage
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /tmp/pv-stage-db
+  persistentVolumeReclaimPolicy: Delete
+
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret-stage
+  namespace: stage
+type: Opaque
+data:
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_USER: postgres
