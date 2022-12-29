@@ -109,3 +109,5 @@
 [Домашнее задание к занятию "12.4 Развертывание кластера на собственных серверах, лекция 2"](12-kubernetes-04-install-part-2)
 
 [Домашнее задание к занятию "12.5 Сетевые решения CNI"](12-kubernetes-05-cni)
+
+[Домашнее задание к занятию "13.1 контейнеры, поды, deployment, statefulset, services, endpoints"](13-kubernetes-config-01-objects)

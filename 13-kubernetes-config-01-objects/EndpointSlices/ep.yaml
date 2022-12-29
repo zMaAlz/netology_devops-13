@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ext-api
+  namespace: prod
+spec:
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: ext-api-ep
+  namespace: prod
+  labels:
+    kubernetes.io/service-name: ext-api
+addressType: FQDN
+ports:
+  - name: web-https
+    appProtocol: https
+    protocol: TCP
+    port: 443
+endpoints:
+  - addresses:
+      - "geocode-maps.yandex.ru"

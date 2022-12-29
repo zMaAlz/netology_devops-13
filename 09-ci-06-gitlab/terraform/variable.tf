@@ -24,6 +24,6 @@ variable "instance_ip_addr_gitlab" {
 }
 
 variable "yc_service_account" {
-  default = "ajemdi18ddp03gl6rgjs"
+  default = "aj....js"
 }
 

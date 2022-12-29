@@ -1,0 +1,205 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prod-front
+  name: prod-front
+  namespace: prod
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: prod-front
+  template:
+    metadata:
+      labels:
+        app: prod-front
+    spec:
+      containers:
+      - image: zmaalz/frontend:latest
+        name: prod-frontend
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: BASE_URL
+            value: http://prod-back:9000
+        ports:
+          - containerPort: 80
+            name: fronthttp-prod
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-front
+  namespace: prod
+spec:
+  selector:
+    app: prod-front
+  ports:
+    - name: web
+      port: 8000
+      targetPort: fronthttp-prod
+  type: NodePort
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prod-back
+  name: prod-back
+  namespace: prod
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: prod-back
+  template:
+    metadata:
+      labels:
+        app: prod-back
+    spec:
+      containers:
+      - image: zmaalz/backend:latest
+        name: prod-backend
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: DATABASE_URL
+            value: postgres://postgres:postgres@prod-db:5432/news
+        ports:
+          - containerPort: 9000
+            name: port-back 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-back
+  namespace: prod
+spec:
+  selector:
+    app: prod-back
+  ports:
+    - name: port-back-prod
+      port: 9000
+      targetPort: port-back
+  type: ClusterIP
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prod-db
+  name: prod-db
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prod-db
+  template:
+    metadata:
+      labels:
+        app: prod-db
+    spec:
+      containers:
+      - image: postgres:13-alpine
+        name: db
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: "/db"
+            name: prod-db
+        envFrom:
+          - secretRef:
+              name: postgres-secret-prod
+        env:
+          - name: POSTGRES_DB
+            value: news
+        ports:
+          - containerPort: 5432
+            name: port-db 
+      nodeSelector:
+        app: sf
+      volumes:
+        - name: prod-db
+          persistentVolumeClaim:
+            claimName: pvc-prod-db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-db
+  namespace: prod
+spec:
+  selector:
+    app: prod-db
+  ports:
+    - name: port-db-prod
+      port: 5432
+      targetPort: port-db
+  type: ClusterIP
+
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-prod-db
+  namespace: prod
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-prod-db
+  namespace: prod
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /tmp/pv-prod-db
+  persistentVolumeReclaimPolicy: Delete
+
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret-prod
+  namespace: prod
+type: Opaque
+data:
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_USER: postgres
