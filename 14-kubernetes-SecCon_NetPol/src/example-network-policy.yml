@@ -1,0 +1,59 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-policy-back
+spec:
+  podSelector:
+    matchLabels:
+      group: back
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          group: front  
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          group: front
+    ports:
+      - protocol: TCP
+        port: 53
+      - protocol: UDP
+        port: 53   
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-policy-front
+spec:
+  podSelector:
+    matchLabels:
+      group: front
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 192.168.0.0/16
+    - podSelector:
+        matchLabels:
+          group: back
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 192.168.0.0/16
+    - podSelector:
+        matchLabels:
+          group: back    
+    ports:
+      - protocol: TCP
+        port: 53
+      - protocol: UDP
+        port: 53

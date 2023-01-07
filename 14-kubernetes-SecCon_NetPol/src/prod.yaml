@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multitool
+  labels:
+    app: multitool
+spec:
+  containers:
+    - name: multitool
+      imagePullPolicy: IfNotPresent
+      image: praqma/network-multitool:fedora
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    group: front
+  name: prod-front
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      group: front
+  template:
+    metadata:
+      labels:
+        group: front
+    spec:
+      containers:
+      - image: praqma/network-multitool:fedora
+        name: prod-front
+        ports:
+          - containerPort: 80
+            name: fronthttp-prod
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-front
+spec:
+  selector:
+    group: front
+  ports:
+    - name: web
+      port: 8000
+      targetPort: fronthttp-prod
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    group: back
+  name: prod-back
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      group: back
+  template:
+    metadata:
+      labels:
+        group: back
+    spec:
+      containers:
+      - image: praqma/network-multitool:fedora
+        name: prod-back
+        ports:
+          - containerPort: 80
+            name: back-prod
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-back
+spec:
+  selector:
+    group: back
+  ports:
+    - name: web
+      port: 9000
+      targetPort: back-prod
+  type: ClusterIP

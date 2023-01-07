@@ -121,3 +121,5 @@
 [Домашнее задание к занятию "14.3 Карты конфигураций"](14-kubernetes-configmap)
 
 [Домашнее задание к занятию "14.4 Сервис-аккаунты"](14-kubernetes-serviceaccount)
+
+[Домашнее задание к занятию "14.5 SecurityContext, NetworkPolicies"](14-kubernetes-SecCon_NetPol)
