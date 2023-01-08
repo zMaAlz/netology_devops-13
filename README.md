@@ -123,3 +123,5 @@
 [Домашнее задание к занятию "14.4 Сервис-аккаунты"](14-kubernetes-serviceaccount)
 
 [Домашнее задание к занятию "14.5 SecurityContext, NetworkPolicies"](14-kubernetes-SecCon_NetPol)
+
+[Домашнее задание к занятию "15.1. Организация сети"](15-Cloud-Network-organization)
