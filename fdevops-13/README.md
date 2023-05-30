@@ -29,7 +29,7 @@
 
 ![](img/infra.jpg)
 
-Для упрощения архитектуры и снижения затрат на аренду облачных ресурсов в stage K8s, кластер ceph были развернуты не в кластерном режиме.
+Для упрощения архитектуры и снижения затрат на аренду облачных ресурсов stage K8s и кластер ceph были развернуты не в кластерном режиме.
 
 [terraform-repo.git](https://github.com/zMaAlz/terraform-repo) - репозиторий с terraform манифестами для создания инфраструктуры в YC 
 
@@ -99,9 +99,10 @@ yandex_resourcemanager_folder_WORK_FOLDER = "b1gso53savovgi3bu3jf"
 ```
 
 ![](img/yc-interface.jpg)
-
-|:----------------------:|:-----------------------:|:----------------------------:|:----------------------------:|
-|![](img/terraform-instans.jpg)|![](img/yc-bakcet.jpg)|![](img/terraform-dns.jpg)| ![](terraform-lb.jpg) |
+![](img/terraform-instans.jpg)  
+![](img/yc-bakcet.jpg)    
+![](img/terraform-dns.jpg)   
+![](img/terraform-lb.jpg)        
 
 ## Kubernetes кластер
 
@@ -240,11 +241,11 @@ kube-system   nodelocaldns-k2cnt                        1/1     Running   0     
 
 #### CNI - Calico
 
-Устанавливается в процессе развертывания кластера K8s.
+Устанавка происходит сразу полсле развертывания кластера K8s.
 
 #### CSI - ceph-csi-rbd
 
-На ВМ ceph_instance устанавливаем [docker](https://github.com/zMaAlz/Docker-install.git) для устанвоки кластера Ceph. Также сразу установим докер на gitlab_instance, в дальнейгем будем его использовать для запуска Gitlab.
+Запускаем установку [docker и docker-compose](https://github.com/zMaAlz/Docker-install.git) на ВМ ceph_instance и gitlab_instance. На ceph_instance докер потребуется для запуска кластера Ceph.
 
 ```bash
 gansible@gitlab-ru-central1-a:~$ it clone https://github.com/zMaAlz/Docker-install.git && cd Docker-install
@@ -261,7 +262,7 @@ srv2                       : ok=11   changed=6    unreachable=0    failed=0    s
 
 ```
 
-В качестве CSI для kubernetes используется [ceph-csi-rbd](https://artifacthub.io/packages/helm/ceph-csi/ceph-csi-rbd), для установки кластера используется playbook [Ceph кластер в режиме single-host](https://github.com/zMaAlz/ceph_single_host).
+В качестве CSI для kubernetes используем [ceph-csi-rbd](https://artifacthub.io/packages/helm/ceph-csi/ceph-csi-rbd), для установки Ceph кластер в режиме single-host - [ansible playbook](https://github.com/zMaAlz/ceph_single_host).
 
 ```bash
 ansible@gitlab-ru-central1-a:~$ git clone https://github.com/zMaAlz/ceph_single_host.git && cd ceph_single_host 
@@ -348,7 +349,15 @@ monitoring   nginx   grafana.familym.ru,prometheus.familym.ru,alertmanager.famil
 
 ####  Мониторинг состояния кластера (Стек Prometheus)
 
-Для корректного перенаправления трафика балансировщиком создем правила ingress. И устанавливаем helm chart Kube-Prometheus-Stack.
+Для корректного перенаправления трафика ингресс контроллером добавляем правила ingress. После чего устанавливаем helm chart с Kube-Prometheus-Stack.
+
+Созданные правила позволят получить доступ к мониторингу по доменным именам.
+
+http://prometheus.familym.ru:8081/
+
+http://grafana.familym.ru:8081/
+
+http://node-exporter.familym.ru:8081/
 
 
 ```bash
@@ -364,17 +373,13 @@ kube-prometheus-stack has been installed. Check its status by running:
   kubectl --namespace default get pods -l "release=monitoring"
 
 ```
-После чего мы можем получить доступ к мониторингу по доменному имени.
 
-http://prometheus.familym.ru:8081/
-
-http://grafana.familym.ru:8081/
-
-http://node-exporter.familym.ru:8081/
+![](img/grafana-nodes.jpg) 
+![](img/grafana-summary.jpg) 
+![](img/node-exporter.jpg) 
+![](img/prometheus.jpg) 
 
 
-|:----------------------:|:-----------------------:|:----------------------------:|:----------------------------:|
-|![](img/grafana-nodes.jpg) | ![](img/grafana-summary.jpg) | ![](img/node-exporter.jpg) | ![](img/prometheus.jpg)  |
 
 
 #### Деплой тестового приложения
@@ -399,7 +404,7 @@ ansible@gitlab-ru-central1-a:~/ helm install appchart ./appchart
 ## CI/CD
 
 
-[Устанавливаем](https://github.com/zMaAlz/scripts/tree/main/Ansible/admin-PC) дополнительные компоненты (helm,kubectl) и создаем каталоги на gitlab_instance и ceph_instance для Gitlab Runner
+[Устанавливаем](https://github.com/zMaAlz/scripts/tree/main/Ansible/admin-PC) дополнительные компоненты (helm,kubectl) и создаем каталоги на gitlab_instance и ceph_instance для Gitlab Runner. Копируем конфиг файл с настройками подключения к кластеру K8s.
 
 
 ```bash
@@ -428,20 +433,15 @@ endpointslice.discovery.k8s.io/gitlab-ep created
 
 ```
 
-Gitlab разворачиваем на gitlab_instance при помощи манифеста [docker-compose](https://github.com/zMaAlz/scripts/tree/main/Docker/gitlab). В балансировщике нагрузке уже добавлено правило для GitLab, пожтому Web интерфейс доступен по адресу http://gitlab.familym.ru:8082. 
+Gitlab разворачиваем на gitlab_instance при помощи манифеста [docker-compose](https://github.com/zMaAlz/scripts/tree/main/Docker/gitlab). В балансировщике нагрузке уже добавлено правило для GitLab, поэтому Web интерфейс доступен по адресу http://gitlab.familym.ru:8082. 
 
-GitLab CI работает с GitHub только с версии premium, поэтому для корректной работы необходимо мигрировать репозиторий в GitLab. Выбираем проект reg-forms-app и в CI/CD Settings копируем токен для подключения Gitlab Runner и создаем переменные с данными авторизации в docker registry
+GitLab CI работает с GitHub только с версии premium, для корректной работы CI  необходимо мигрировать репозиторий в GitLab. Выбираем проект reg-forms-app, в CI/CD Settings копируем токен для подключения Gitlab Runner и создаем переменные с данными авторизации в docker registry. Gitlab Runner установлен на виртуальной машине ceph_instance при помощи [ansible-playbook](https://github.com/zMaAlz/scripts/tree/main/Ansible/gitlab_runner). Перед установкой добавляем токен в groupe_vars.
 
 ![](img/gitlab-project.jpg)
 ![](img/add-vars-gitlab.jpg)
 
-
-Gitlab Runner установлен на виртуальной машине ceph_instance при помощи [ansible-playbook](https://github.com/zMaAlz/scripts/tree/main/Ansible/gitlab_runner). Перед установкой добавляем токен в groupe_vars.
-
 ![](img/gitlab-runner.jpg)
 
-
-При любом коммите в репозиторие с тестовым приложением происходит сборка и отправка в регистр Docker образа.
+При любом коммите в репозиторие с тестовым приложением происходит сборка и отправка в рестр Docker образа. При добавления тега в ветке main запускется деплой helm chart в кластер kubernetes. 
 ![](img/gitlab-ci.jpg)
 ![](img/docker-hub2.jpg)
-
