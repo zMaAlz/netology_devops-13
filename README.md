@@ -125,3 +125,5 @@
 [Домашнее задание к занятию "14.5 SecurityContext, NetworkPolicies"](14-kubernetes-SecCon_NetPol)
 
 [Домашнее задание к занятию "15.1. Организация сети"](15-Cloud-Network-organization)
+
+[Дипломный работа профессии DevOps-инженер](fdevops-13)
